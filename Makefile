@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -I./include -g
+CFLAGS = -Wall -I./include -ggdb3
 SRC = src/main.c
 EXEC = out
 HEADER = include/calc.h

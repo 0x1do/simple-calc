@@ -17,7 +17,7 @@ char *getInput()
     {
         int hexval = (int)raw_input[i];
 
-        if (hexval > 94 || (hexval > 67 && hexval < 94) || hexval == 44 
+        if (hexval > 94 || (hexval > 67 && hexval < 95) || hexval == 44 
         || hexval < 40 || hexval == 46)
         {
             
@@ -92,6 +92,7 @@ int parse(char *in)
     char *res = strchr(in, '(');
     if (res == NULL)
     {
+        solve(in);
         return FALSE;
     }
     
@@ -103,7 +104,7 @@ int parse(char *in)
             first_bracket = i;
         }       
     }
-
+/// (32-(24-2*3))
     char cutstr[256];
     strncpy(cutstr, in + first_bracket*sizeof(char), strlen(in)-first_bracket);
     char *result = strchr(cutstr, ')');
@@ -119,12 +120,42 @@ int parse(char *in)
     memset(subs, 0, 256);
     strncpy(subs, in + first_bracket*sizeof(char), offset);
     subs[strlen(subs)+1] = '\0';
-    printf("subs -> %s\n", subs);
+
     char final[offset-2];
     strncpy(final, subs + 1, strlen(subs));
     final[strlen(subs)+1] = '\0';
     printf("final -> %s\n", final);
+    solve(final);
     return 0;
+}
+
+void solve(char *in) // ast implementation
+{
+    struct kaki
+    {
+        char op;
+        char *children_ptr;
+    };
+
+    struct kaki first;
+
+    bool flag = TRUE;
+    int i = 0;
+    while ((i < strlen(in)) && flag == TRUE)
+    {
+        if (!isdigit(in[i]))
+        {
+            if (i == 0)
+            {
+                fprintf(stderr, "should be number between brackets and operator\n");
+                return;
+            }
+            first.op = in[i];
+            flag = FALSE;
+        }
+        i++;
+    }
+    
 }
 
 int main()
