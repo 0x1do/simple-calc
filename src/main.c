@@ -18,7 +18,7 @@ char *getInput()
         int hexval = (int)raw_input[i];
 
         if (hexval > 94 || (hexval > 67 && hexval < 94) || hexval == 44 
-        || hexval < 40)
+        || hexval < 40 || hexval == 46)
         {
             
             fprintf(stderr, "write numbers one operations only!\n");
@@ -32,7 +32,7 @@ char *getInput()
 }
 
 
-int validateop(char *in)
+bool validateop(char *in)
 {
     int bracket = 0;
     bool op = FALSE;
@@ -41,7 +41,7 @@ int validateop(char *in)
     '*' || in[size-1] == '-' || in[size-1] == '+' || in[size-1] == '/' || 
     in[size-1] == '^' || in[size-1] == '*' || in[size-1] == '(')
     {
-        return 1;
+        return FALSE;
     }
 
     if (in == NULL)
@@ -64,7 +64,7 @@ int validateop(char *in)
             }
             else
             {
-                return 1;
+                return FALSE;
             }
         }
         else if (in[i] == '-' || in[i] == '+' || in[i] == '/' || in[i] == '^' ||
@@ -72,7 +72,7 @@ int validateop(char *in)
         {
             if (op)
             {
-                return 1;
+                return FALSE;
             }
             op = TRUE;
         }
@@ -82,19 +82,62 @@ int validateop(char *in)
         }
     }
     
+    return TRUE;
+}
+
+
+
+int parse(char *in)
+{
+    char *res = strchr(in, '(');
+    if (res == NULL)
+    {
+        return FALSE;
+    }
+    
+    int first_bracket = res-in;
+    for (int i = first_bracket; i < size; i++)
+    {
+        if (in[i] == '(')
+        {
+            first_bracket = i;
+        }       
+    }
+
+    char cutstr[256];
+    strncpy(cutstr, in + first_bracket*sizeof(char), strlen(in)-first_bracket);
+    char *result = strchr(cutstr, ')');
+    int offset = result-cutstr;
+    if (offset == 1)
+    {
+        fprintf(stderr, "Expression should be inside the brackets\n");
+        return 1;
+    }
+    
+
+    char subs[256];
+    memset(subs, 0, 256);
+    strncpy(subs, in + first_bracket*sizeof(char), offset);
+    subs[strlen(subs)+1] = '\0';
+    printf("subs -> %s\n", subs);
+    char final[offset-2];
+    strncpy(final, subs + 1, strlen(subs));
+    final[strlen(subs)+1] = '\0';
+    printf("final -> %s\n", final);
     return 0;
 }
 
 int main()
 {
     char *in = getInput();
+    int kelsi = parse(in);
     if (in == NULL)
     {
-        fprintf(stderr, "imanuel kaki\n");
-        free(in);
+        fprintf(stderr, "Input error\n");
         return 1;
     }
-    else if (validateop(in))
+    
+    if (!validateop(in))
     {
         fprintf(stderr, "invalid expression\n");
         free(in);

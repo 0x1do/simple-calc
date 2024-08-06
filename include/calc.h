@@ -8,6 +8,7 @@
 #define FALSE 0
 
 char *getInput();
-int validateop(char *in);
+bool validateop(char *in);
+int parse(char *in);
 
 #endif // CALC_H
