@@ -3,7 +3,7 @@
 int size;
 char *getInput()
 {
-    char *raw_input = malloc(256 * sizeof(char));
+    char *raw_input = malloc(BUFFER_SIZE * sizeof(char));
     if (raw_input == NULL)
     {
         fprintf(stderr, "Memory allocation failed\n");
@@ -13,21 +13,6 @@ char *getInput()
     raw_input[strcspn(raw_input, "\n")] = '\0';
     size = strlen(raw_input);
 
-    for (size_t i = 0; i < size; i++)
-    {
-        int hexval = (int)raw_input[i];
-
-        if (hexval > 94 || (hexval > 67 && hexval < 95) || hexval == 44 
-        || hexval < 40 || hexval == 46)
-        {
-            
-            fprintf(stderr, "write numbers one operations only!\n");
-            free(raw_input);
-            return NULL;
-        }
-        
-    }
-    printf("end of input\n");
     return raw_input;
 }
 
@@ -92,6 +77,7 @@ int parse(char *in)
     char *res = strchr(in, '(');
     if (res == NULL)
     {
+        tokenizer(in);
         solve(in);
         return FALSE;
     }
@@ -125,19 +111,64 @@ int parse(char *in)
     strncpy(final, subs + 1, strlen(subs));
     final[strlen(subs)+1] = '\0';
     printf("final -> %s\n", final);
+    tokenizer(final);
     solve(final);
     return 0;
 }
 
+void tokenizer(char *input) {
+    while (*input) {
+        if (isspace(*input))
+        {
+            input++;
+        }
+        else if (isdigit(*input))
+        {
+            const char *start = input;
+            while (isdigit(*input))
+            {
+                input++;
+            }
+            printf("number: %.*s\n", (int)(input - start), start);
+        }
+        else if (*input == '+' || *input == '-' || *input == '*' || *input == '/')
+        {
+            // Print operator
+            printf("operator: %c\n", *input);
+            input++;
+        }
+        else if (*input == '(' || *input == ')')
+        {
+            printf("parentheses: %c\n", *input);
+            input++;
+        }
+        
+        else
+        {
+            fprintf(stderr, "invalid input");
+            exit(0);
+        }
+    }
+}
+
+
+
+
 void solve(char *in) // ast implementation
 {
-    struct kaki
+    struct Kaki
     {
         char op;
         char *children_ptr;
     };
+    
+    struct Node
+    {
+        void *data;
+        struct Node* next;
+    };
 
-    struct kaki first;
+    struct Kaki first;
 
     bool flag = TRUE;
     int i = 0;
@@ -151,8 +182,20 @@ void solve(char *in) // ast implementation
                 return;
             }
             first.op = in[i];
+            int *integer = malloc(sizeof(int));
+            char mid[256];
+            memset(mid, 0, sizeof(mid));
+            strncpy(mid, in, i);
+            mid[i] = '\0';
+            char *endptr; 
+            *integer = (int)strtol(mid, &endptr, 10);
+            struct Node num;
+            num.data = NULL;
+
+
             flag = FALSE;
-        }
+
+            }
         i++;
     }
     
@@ -161,6 +204,7 @@ void solve(char *in) // ast implementation
 int main()
 {
     char *in = getInput();
+    tokenizer(in);
     int kelsi = parse(in);
     if (in == NULL)
     {
@@ -177,3 +221,4 @@ int main()
     free(in);
     return 0;
 }
+//modify flow!!
