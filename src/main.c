@@ -77,7 +77,6 @@ int parse(char *in)
     char *res = strchr(in, '(');
     if (res == NULL)
     {
-        tokenizer(in);
         solve(in);
         return FALSE;
     }
