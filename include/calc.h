@@ -13,5 +13,5 @@ bool validateop(char *in);
 int parse(char *in);
 void tokenizer(char *in);
 void solve(char *in);
-
+int algo(char *in);
 #endif // CALC_H
