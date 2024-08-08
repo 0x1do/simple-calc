@@ -111,7 +111,7 @@ int parse(char *in)
     strncpy(final, subs + 1, strlen(subs));
     final[strlen(subs)+1] = '\0';
     printf("inner  pharanthesis -> %s\n", final);
-    //tokenizer(final);
+    //(tokenizer(final);
     solve(final);
     return 0;
 }

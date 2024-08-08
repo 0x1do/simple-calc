@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h> 
+#include <glib.h>
 #define TRUE 1
 #define FALSE 0
 #define BUFFER_SIZE 256
