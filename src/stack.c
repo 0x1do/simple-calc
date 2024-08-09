@@ -38,7 +38,7 @@ void push(Stack *s, char value) {
 char pop(Stack *s) {
     if (isEmpty(s)) {
         printf("Stack underflow\n");
-        return -1;
+        return '\0';
     }
     return s->arr[(s->top)--];
 }
@@ -47,7 +47,7 @@ char pop(Stack *s) {
 char peek(Stack *s) {
     if (isEmpty(s)) {
         printf("Stack is empty\n");
-        return -1;
+        return '\0';
     }
     return s->arr[s->top];
 }
