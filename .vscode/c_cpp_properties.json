@@ -4,7 +4,8 @@
             "name": "LINUX",
             "includePath": [
                 "/home/ido/calc/**",
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/include/glib-2.0/"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

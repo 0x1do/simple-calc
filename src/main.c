@@ -1,4 +1,9 @@
 #include "/home/ido/calc/include/calc.h"
+#include <ctype.h>
+#include "/home/ido/calc/include/stack.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int size;
 char *getInput()
@@ -115,7 +120,8 @@ int parse(char *in)
     return 0;
 }
 
-void tokenizer(char *input) {
+void tokenizer(char *input)
+{
     char tokens[BUFFER_SIZE];
     memset(tokens, 0, BUFFER_SIZE);
     while (*input)
