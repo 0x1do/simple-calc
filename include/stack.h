@@ -1,11 +1,8 @@
-
-
-
 #define MAX 256 // Maximum size of the stack
 
 typedef struct {
-    int arr[MAX];
-    int top;
+  char arr[MAX];
+  int top;
 } Stack;
 
 void initStack(Stack *s);

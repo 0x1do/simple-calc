@@ -7,7 +7,7 @@
 #define MAX 256 // Maximum size of the stack
 
 typedef struct {
-    int arr[MAX];
+    char arr[MAX];
     int top;
 } Stack;
 
