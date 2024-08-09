@@ -26,7 +26,7 @@ int isFull(Stack *s) {
 }
 
 
-void push(Stack *s, int value) {
+void push(Stack *s, char value) {
     if (isFull(s)) {
         printf("Stack overflow\n");
         return;
@@ -35,7 +35,7 @@ void push(Stack *s, int value) {
 }
 
 
-int pop(Stack *s) {
+char pop(Stack *s) {
     if (isEmpty(s)) {
         printf("Stack underflow\n");
         return -1;
@@ -44,7 +44,7 @@ int pop(Stack *s) {
 }
 
 
-int peek(Stack *s) {
+char peek(Stack *s) {
     if (isEmpty(s)) {
         printf("Stack is empty\n");
         return -1;
@@ -61,23 +61,4 @@ void display(Stack *s) {
     for (int i = s->top; i >= 0; i--) {
         printf("%d\n", s->arr[i]);
     }
-}
-
-int main() {
-    Stack s;
-    initStack(&s);
-
-    push(&s, 10);
-    push(&s, 20);
-    push(&s, 30);
-
-    printf("Stack contents:\n");
-    display(&s);
-
-    printf("Popped element: %d\n", pop(&s));
-
-    printf("Stack contents after pop:\n");
-    display(&s);
-
-    return 0;
 }
