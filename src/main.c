@@ -79,6 +79,10 @@ bool validateop(char *in)
 
 int parse(char *in)  // gets tokens array return answer
 {
+    for (int i = 0; i < size; i++)
+    {
+        /* code */
+    }
     
     return 0;
 }
@@ -87,7 +91,7 @@ char *tokenizer(char *input)
 {
     char tokens[BUFFER_SIZE];
     memset(tokens, 0, BUFFER_SIZE);
-
+    size = 0;
     int tokenIndex = 0;
 
     while (*input) {
@@ -101,16 +105,19 @@ char *tokenizer(char *input)
             int len = input - start;
             snprintf(&tokens[tokenIndex], BUFFER_SIZE - tokenIndex, "%.*s", len, start);
             tokenIndex += len;
-            printf("num %s\n", &tokens[tokenIndex - len]);
+            
+            size++;
         } else if (*input == '+' || *input == '-' || *input == '*' || *input == '/') {
             tokens[tokenIndex++] = *input;
             tokens[tokenIndex] = '\0';
-            printf("op %c\n", *input);
+            
+            size++;
             input++;
         } else if (*input == '(' || *input == ')') {
             tokens[tokenIndex++] = *input;
             tokens[tokenIndex] = '\0';
-            printf("ph %c\n", *input);
+            
+            size++;
             input++;
         } else {
             fprintf(stderr, "Invalid input");
@@ -119,20 +126,7 @@ char *tokenizer(char *input)
     }
 
 
-    printf("array -->> %s\n", tokens);
-
-    Stack stack;
-    initStack(&stack);
-    int len = strlen(tokens);
-    for (int i = 0; i < len; i++) {
-        
-        if (isdigit(tokens[i])) {
-            int num = atoi(&tokens[i]);
-            push(&stack, num);
-        } else {
-            push(&stack, tokens[i]);
-        }
-    }
+    printf("tokens: %s\n", tokens);
 
     char *retval;
     strcpy(retval, tokens);
@@ -144,6 +138,12 @@ char *tokenizer(char *input)
 int main()
 {
     char *in = getInput();
+    if (!validateop(in))
+    {
+        fprintf(stderr, "invalid expression\n");
+        free(in);
+        return 1;
+    }
     tokenizer(in);
     parse(in);
     if (in == NULL)
@@ -152,13 +152,7 @@ int main()
         return 1;
     }
     
-    if (!validateop(in))
-    {
-        fprintf(stderr, "invalid expression\n");
-        free(in);
-        return 1;
-    }
+
     free(in);
     return 0;
 }
-//modify flow!!
