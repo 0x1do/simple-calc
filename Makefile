@@ -1,26 +1,13 @@
 CC = clang
-CFLAGS = -Wall -I./include -ggdb3 $(shell pkg-config --cflags glib-2.0)
-LDFLAGS = $(shell pkg-config --libs glib-2.0)
-SRC = src/main.c
+CFLAGS = -Wall -I./include -ggdb3
+SRC = src/main.c src/stack.c
 EXEC = out
-HEADER = include/calc.h
-
+HEADER = include/calc.h include/stack.h
 
 all: clean $(EXEC)
 
 $(EXEC): $(SRC) $(HEADER)
-	$(CC) $(CFLAGS) -o $(EXEC) $(SRC) $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $(EXEC) $(SRC)
 
 clean:
 	rm -f $(EXEC)
-
-
-
-CFLAGS = -Wall -I./include -ggdb3 $(shell pkg-config --cflags glib-2.0)
-LDFLAGS = $(shell pkg-config --libs glib-2.0)
-
-
-
-
-
-

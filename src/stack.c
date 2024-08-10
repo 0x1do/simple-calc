@@ -1,15 +1,10 @@
 #include "/home/ido/calc/include/calc.h"
-#include <stdio.h>
+#include "/home/ido/calc/include/stack.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX 256 // Maximum size of the stack
 
-typedef struct {
-    char arr[MAX];
-    int top;
-} Stack;
 
 void initStack(Stack *s) {
     s->top = -1;
@@ -53,7 +48,7 @@ char peek(Stack *s) {
 }
 
 
-void display(Stack *s) {
+void displayStack(Stack *s) {
     if (isEmpty(s)) {
         printf("Stack is empty\n");
         return;

@@ -4,10 +4,12 @@
 #define TRUE 1
 #define FALSE 0
 #include <stdbool.h>
+
+
 char *getInput();
 bool validateop(char *in);
 int parse(char *in);
-void tokenizer(char *in);
+char *tokenizer(char *in);
 void solve(char *in);
 int algo(char *in);
 #endif // CALC_H
