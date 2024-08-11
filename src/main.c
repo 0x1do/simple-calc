@@ -144,29 +144,37 @@ int parse(char *in) {
     displayStack(&operators);
 
 
+
+    
+    
+    for (int i = 0; *peek(&numbers) != '\0'; i++) 
+    {
+        while (isdigit(*peek(&numbers)))
+        {
+            char *tmp = pop(&numbers);
+            push(&operators, tmp);
+        }
+        char operator = *pop(&numbers);
+        int num1 = (int)*(pop(&operators));
+        int num2 = (int)*(pop(&operators));
+        if (operator  == '+')
+        {
+            push(&operators, (char*)(num1 + num2));
+        } else if (operator == '-')
+        {
+            push(&operators, (char*)(num1 - num2));
+        } else if (operator == '*')
+        {
+            push(&operators, (char*)(num1 * num2));
+        } else {
+            push(&operators, (char*)(num1 / num2));
+        }
+    }
+    int answer = (int)*(pop(&operators));
+    printf("asnwer:::::: %d\n", answer);
     freeStack(&operators);
-    
-    
-    while (isdigit(*peek(&numbers)))
-    {
-        char *tmp = pop(&numbers);
-        push(&operators, tmp);
-    }
-    char operator = *pop(&numbers);
-    int num1 = (int)*(pop(&operators));
-    int num2 = (int)*(pop(&operators));
-    if (operator  == '+')
-    {
-        return num1 + num2;
-    } else if (operator == '-')
-    {
-        return num1-num2;
-    } else if (operator == '*')
-    {
-        return num1*num2;
-    } else {
-        return num1/num2;
-    }
+    freeStack(&numbers);
+    return answer;
     
     
     
