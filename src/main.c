@@ -143,9 +143,35 @@ int parse(char *in) {
     printf("operators:\n");
     displayStack(&operators);
 
-    freeStack(&numbers);
+
     freeStack(&operators);
     
+    
+    while (isdigit(*peek(&numbers)))
+    {
+        char *tmp = pop(&numbers);
+        push(&operators, tmp);
+    }
+    char operator = *pop(&numbers);
+    int num1 = (int)*(pop(&operators));
+    int num2 = (int)*(pop(&operators));
+    if (operator  == '+')
+    {
+        return num1 + num2;
+    } else if (operator == '-')
+    {
+        return num1-num2;
+    } else if (operator == '*')
+    {
+        return num1*num2;
+    } else {
+        return num1/num2;
+    }
+    
+    
+    
+
+
     return 0;
 }
 
