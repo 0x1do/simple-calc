@@ -5,6 +5,10 @@
 #define FALSE 0
 #include <stdbool.h>
 
+typedef struct {
+    bool isnumeral;
+    char *data;
+} token;
 
 char *getInput();
 bool validateop(char *in);

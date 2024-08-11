@@ -6,6 +6,9 @@
 #include <string.h>
 
 int size;
+
+void freeStack(Stack *s);
+
 char *getInput()
 {
     char *raw_input = malloc(BUFFER_SIZE * sizeof(char));
@@ -76,16 +79,124 @@ bool validateop(char *in)
 }
 
 
-
 int parse(char *in)  // gets tokens array return answer
 {
-    for (int i = 0; i < size; i++)
+    Stack numbers;
+    initStack(&numbers);
+    Stack operators;
+    initStack(&operators);
+
+    char adding[BUFFER_SIZE]; 
+    int count = 0;
+
+    for (int i = 0; in[i] != '\0'; i++)
     {
-        /* code */
+        if (isdigit(in[i])) {
+            if (count < BUFFER_SIZE - 1) {
+                adding[count] = in[i]; 
+                count++;
+            }
+        } else {
+            if (in[i] == ')')
+            {
+                while (*peek(&operators) != (char)'(')
+                {
+                    char tmpelm[2] = {*pop(&operators), '\0' };
+                    push(&numbers, tmpelm);
+                }
+                pop(&operators);
+            }
+            
+            if (count > 0) {
+                adding[count] = '\0'; 
+                push(&numbers, adding);
+                count = 0;
+            }
+            printf("op peek -> %s\n", peek(&operators));
+            if (peek(&operators) == NULL) {
+                if (in[i] == '+' || in[i] == '-' || in[i] == '*'
+                    || in[i] == '/' || in[i] == '(') {
+                    char operatorStr[2] = { in[i], '\0' };
+                    push(&operators, operatorStr);
+                }
+            } else if ((*peek(&operators) == '*' || *peek(&operators) == '/') &&
+            (in[i] == '+'|| in[i] == '-')) {
+                char *popelm = pop(&operators);
+                push(&numbers, popelm);
+                char operatorStr[2] = { in[i], '\0' };
+                push(&operators, operatorStr);
+            } else if (in[i] == '+' || in[i] == '-' || in[i] == '*'
+                || in[i] == '/' || in[i] == '(') {
+                char operatorStr[2] = { in[i], '\0' };
+                push(&operators, operatorStr);
+                }
+            
+        }
     }
+    
+
+    if (count > 0) {
+        adding[count] = '\0';
+        push(&numbers, adding);
+    }
+
+    char tmpelm[2] = {*pop(&operators), '\0' };
+    push(&numbers, tmpelm);
+
+    printf("nums:\n");
+    displayStack(&numbers);
+    printf("operators:\n");
+
+    displayStack(&operators);
+    
+
+    freeStack(&numbers);
+    freeStack(&operators);
     
     return 0;
 }
+
+// int parse(char *in)  // gets tokens array return answer
+// {
+//     Stack numbers;
+//     initStack(&numbers);
+//     Stack operators;
+//     initStack(&operators);
+
+//     int number = 0;
+//     int foundNumber = 0;
+//     char *adding;
+//     for (int i = 0; in[i] != '\0'; i++)
+//     {
+
+//         char num = 0;
+//         int mid = 0;
+//         char buffer[BUFFER_SIZE];
+//         int count = 0;
+//         if (isdigit(in[i])) {
+//             adding += in[i];
+            
+//         } else if ((peek(&operators) == "*" || peek(&operators) == "/") &&
+//                 (in[i] == "-" || in[i] == "+")) {
+//             push(&numbers, adding);
+//             adding = "";
+//             push(&numbers, &in[i]);
+//         } else {
+//             // int c = (int)in[i];
+//             // char a = c;
+//             push(&numbers, adding);
+//             adding = "";
+//             push(&operators, &in[i]);
+//         } 
+//     }
+//     printf("nums:\n");
+//     displayStack(&numbers);
+//     printf("operators:\n");
+//     displayStack(&operators);
+    
+//     return 0;
+// }
+    
 
 char *tokenizer(char *input)
 {
@@ -105,26 +216,21 @@ char *tokenizer(char *input)
             int len = input - start;
             snprintf(&tokens[tokenIndex], BUFFER_SIZE - tokenIndex, "%.*s", len, start);
             tokenIndex += len;
-            
-            size++;
+
         } else if (*input == '+' || *input == '-' || *input == '*' || *input == '/') {
             tokens[tokenIndex++] = *input;
             tokens[tokenIndex] = '\0';
-            
-            size++;
             input++;
         } else if (*input == '(' || *input == ')') {
             tokens[tokenIndex++] = *input;
             tokens[tokenIndex] = '\0';
-            
-            size++;
             input++;
         } else {
-            fprintf(stderr, "Invalid input");
-            return NULL;
+            fprintf(stderr, "Invalid input\n");
+            exit(0);
         }
     }
-
+    size = strlen(tokens);
 
     printf("tokens: %s\n", tokens);
 
