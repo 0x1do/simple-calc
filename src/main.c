@@ -79,8 +79,7 @@ bool validateop(char *in)
 }
 
 
-int parse(char *in)  // gets tokens array return answer
-{
+int parse(char *in) {
     Stack numbers;
     initStack(&numbers);
     Stack operators;
@@ -89,72 +88,67 @@ int parse(char *in)  // gets tokens array return answer
     char adding[BUFFER_SIZE]; 
     int count = 0;
 
-    for (int i = 0; in[i] != '\0'; i++)
-    {
+    for (int i = 0; in[i] != '\0'; i++) {
         if (isdigit(in[i])) {
             if (count < BUFFER_SIZE - 1) {
-                adding[count] = in[i]; 
-                count++;
+                adding[count++] = in[i]; 
             }
         } else {
-            if (in[i] == ')')
-            {
-                while (*peek(&operators) != (char)'(')
-                {
-                    char tmpelm[2] = {*pop(&operators), '\0' };
-                    push(&numbers, tmpelm);
-                }
-                pop(&operators);
-            }
-            
             if (count > 0) {
                 adding[count] = '\0'; 
-                push(&numbers, adding);
+                push(&numbers, strdup(adding)); // Push a duplicate of the number
                 count = 0;
             }
-            printf("op peek -> %s\n", peek(&operators));
-            if (peek(&operators) == NULL) {
-                if (in[i] == '+' || in[i] == '-' || in[i] == '*'
-                    || in[i] == '/' || in[i] == '(') {
+
+            if (in[i] == ')') {
+                while (!isEmpty(&operators) && *peek(&operators) != '(') {
+                    char *tmpelm = pop(&operators);
+                    push(&numbers, tmpelm);
+                }
+                pop(&operators); // Pop the '('
+            } else {
+                // Handle operators
+                if (in[i] == '+' || in[i] == '-') {
+                    while (!isEmpty(&operators) && (*peek(&operators) == '*' || *peek(&operators) == '/')) {
+                        char *tmpelm = pop(&operators);
+                        push(&numbers, tmpelm);
+                    }
+                    char operatorStr[2] = { in[i], '\0' };
+                    push(&operators, operatorStr);
+                } else if (in[i] == '*' || in[i] == '/') {
                     char operatorStr[2] = { in[i], '\0' };
                     push(&operators, operatorStr);
                 }
-            } else if ((*peek(&operators) == '*' || *peek(&operators) == '/') &&
-            (in[i] == '+'|| in[i] == '-')) {
-                char *popelm = pop(&operators);
-                push(&numbers, popelm);
-                char operatorStr[2] = { in[i], '\0' };
-                push(&operators, operatorStr);
-            } else if (in[i] == '+' || in[i] == '-' || in[i] == '*'
-                || in[i] == '/' || in[i] == '(') {
-                char operatorStr[2] = { in[i], '\0' };
-                push(&operators, operatorStr);
-                }
-            
+            }
         }
     }
-    
 
     if (count > 0) {
         adding[count] = '\0';
-        push(&numbers, adding);
+        push(&numbers, strdup(adding)); // Push a duplicate of the last number
     }
 
-    char tmpelm[2] = {*pop(&operators), '\0' };
-    push(&numbers, tmpelm);
+    // Pop all remaining operators
+    while (!isEmpty(&operators)) {
+        char *tmpelm = pop(&operators);
+        push(&numbers, tmpelm);
+    }
 
+    // printf("nums:\n");
+    // displayStack(&numbers);    
+
+    reverseStack(&numbers);
     printf("nums:\n");
     displayStack(&numbers);
     printf("operators:\n");
-
     displayStack(&operators);
-    
 
     freeStack(&numbers);
     freeStack(&operators);
     
     return 0;
 }
+
 
 // int parse(char *in)  // gets tokens array return answer
 // {
