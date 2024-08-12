@@ -12,6 +12,6 @@ typedef struct {
 
 char *getInput();
 bool validateop(char *in);
-int parse(char *in);
+int parse(char *in);   
 char *tokenizer(char *in);
 #endif // CALC_H
