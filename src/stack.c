@@ -23,11 +23,7 @@ int isFull(Stack *s)
 
 void push(Stack *s, const char *value)
 {
-    if (isFull(s)) {
-        return;
-    }
-    s->top += 1;
-    s->arr[(s->top)] = strdup(value);
+    s->arr[++(s->top)] = strdup(value);
 }
 
 char *pop(Stack *s)
@@ -49,7 +45,6 @@ char *peek(Stack *s)
 void displayStack(Stack *s)
 {
     if (isEmpty(s)) {
-        printf("Stack is empty\n");
         return;
     }
 

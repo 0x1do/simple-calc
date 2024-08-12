@@ -80,9 +80,9 @@ bool validateop(char *in)
 
 
 int parse(char *in) {
-    Stack numbers;
+    Stack numbers = {0};
     initStack(&numbers);
-    Stack operators;
+    Stack operators = {0};
     initStack(&operators);
 
     char adding[BUFFER_SIZE]; 
@@ -95,7 +95,7 @@ int parse(char *in) {
         } else {
             if (count > 0) {
                 adding[count] = '\0'; 
-                push(&numbers, strdup(adding)); // Push a duplicate of the number
+                push(&numbers, strdup(adding));
                 count = 0;
             }
 
@@ -104,9 +104,8 @@ int parse(char *in) {
                     char *tmpelm = pop(&operators);
                     push(&numbers, tmpelm);
                 }
-                pop(&operators); // Pop the '('
+                pop(&operators);
             } else {
-                // Handle operators
                 if (in[i] == '+' || in[i] == '-') {
                     while (!isEmpty(&operators) && (*peek(&operators) == '*' || *peek(&operators) == '/')) {
                         char *tmpelm = pop(&operators);
@@ -146,37 +145,41 @@ int parse(char *in) {
     printf("postfix:\n");
     displayStack(&numbers);
 
-    
-    
-    // for (int i = 0; *peek(&numbers) != '\0'; i++) 
-    // {
-    //     while (isdigit(*peek(&numbers)))
-    //     {
-    //         char *tmp = pop(&numbers);
-    //         push(&operators, tmp);
-    //     }
-    //     char operator = *pop(&numbers);
-    //     int num1 = (int)*(pop(&operators));
-    //     int num2 = (int)*(pop(&operators));
-    //     if (operator  == '+')
-    //     {
-    //         push(&operators, (char*)(num1 + num2));
-    //     } else if (operator == '-')
-    //     {
-    //         push(&operators, (char*)(num1 - num2));
-    //     } else if (operator == '*')
-    //     {
-    //         push(&operators, (char*)(num1 * num2));
-    //     } else {
-    //         push(&operators, (char*)(num1 / num2));
-    //     }
-    // }
-    // int answer = (int)*(pop(&operators));
-    // printf("asnwer:::::: %d\n", answer);
-    // return answer;
-    
-    
-    
+// 11+
+    while (!isEmpty(&numbers)) 
+    {
+        while (isdigit(*peek(&numbers)))
+        {
+            char *tmp = pop(&numbers);
+            push(&operators, tmp);
+        }
+        char operator = *pop(&numbers);
+        int num2 = atoi(pop(&operators));
+        int num1 = atoi(pop(&operators));
+        char buffer[BUFFER_SIZE];
+        if (operator  == 43) {
+            snprintf(buffer, sizeof(buffer), "%d", num1 + num2);
+            push(&operators, buffer);
+        } else if (operator == 45) {
+            snprintf(buffer, sizeof(buffer), "%d", num1 - num2);
+            push(&operators, buffer);
+        } else if (operator == 42) {
+            snprintf(buffer, sizeof(buffer), "%d", num1 * num2);
+            push(&operators, buffer);
+        } else {
+            snprintf(buffer, sizeof(buffer), "%d", num1 / num2);
+            push(&operators, buffer);
+        }
+    }
+    int answer = atoi(pop(&operators));
+    printf("answer:::::: %d\n", answer);
+    return answer;
+
+// void push_result(Stack *operators, int num1, int num2) {
+//     char buffer[32]; // Adjust size as needed
+//     snprintf(buffer, sizeof(buffer), "%d", num1 + num2);
+//     push(operators, buffer);
+// }
 
 
     return 0;
@@ -288,4 +291,18 @@ int main()
 
     free(in);
     return 0;
+
+    // Stack stack;
+    // initStack(&stack);
+
+    // push(&stack, "10");
+    // push(&stack, "20");
+    // push(&stack, "30");
+
+    // printf("%s popped from stack\n", pop(&stack));
+    // printf("%s popped from stack\n", pop(&stack));
+    // printf("is empty: %d\n", isEmpty(&stack));
+    // printf("%s popped from stack\n", pop(&stack));
+    // printf("is empty: %d\n", isEmpty(&stack));
+    // return 0;
 }
