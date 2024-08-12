@@ -5,17 +5,21 @@
 #include <string.h>
 #include <ctype.h>
 
-int size;
+int size = 0;
 
 char *getInput()
 {
     char *raw_input = malloc(BUFFER_SIZE * sizeof(char));
     if (raw_input == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
-        return NULL;
+        exit(0);
     }
 
-    fgets(raw_input, BUFFER_SIZE, stdin);
+    if (fgets(raw_input, BUFFER_SIZE, stdin) == NULL) {
+        free(raw_input);
+        fprintf(stderr, "Input reading failed\n");
+        exit(0);
+    }
     raw_input[strcspn(raw_input, "\n")] = '\0';
     size = strlen(raw_input);
 
@@ -73,7 +77,7 @@ int parse(char *in)
     Stack operators = {0};
     initStack(&operators);
 
-    char adding[BUFFER_SIZE]; 
+    char adding[BUFFER_SIZE] = {0}; 
     int count = 0;
 
     for (int i = 0; in[i] != '\0'; i++)
@@ -142,7 +146,7 @@ int parse(char *in)
         char operator = *pop(&numbers);
         int num2 = atoi(pop(&operators));
         int num1 = atoi(pop(&operators));
-        char buffer[BUFFER_SIZE];
+        char buffer[BUFFER_SIZE] = {0};
 
         if (operator  == 43) {
             snprintf(buffer, sizeof(buffer), "%d", num1 + num2);

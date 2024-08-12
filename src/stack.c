@@ -34,6 +34,7 @@ char *pop(Stack *s)
     return s->arr[(s->top)--];
 }
 
+
 char *peek(Stack *s)
 {
     if (isEmpty(s)) {
@@ -42,39 +43,38 @@ char *peek(Stack *s)
     return s->arr[s->top];
 }
 
+
 void displayStack(Stack *s)
 {
     if (isEmpty(s)) {
         return;
     }
 
-    for (int i = s->top; i >= 0; i--) {
+    for (int i = s->top; i >= 0; i--)
+    {
         printf("%s", s->arr[i]);
     }
     printf("\n");
 }
 
 
-void insertAtBottom(Stack *s, const char *value) {
+void insertAtBottom(Stack *s, const char *value)
+{
     if (isEmpty(s)) {
         push(s, value);
     } else {
-        
         char *temp = pop(s);
-        
         insertAtBottom(s, value);
-        
         push(s, temp);
     }
 }
 
-void reverseStack(Stack *s) {
+
+void reverseStack(Stack *s)
+{
     if (!isEmpty(s)) {
-        
         char *temp = pop(s);
-        
         reverseStack(s);
-        
         insertAtBottom(s, temp);
     }
 }     
