@@ -1,5 +1,5 @@
-#include "/home/ido/newcalc/include/calc.h"
-#include "/home/ido/newcalc/include/stack.h"
+#include "../include/calc.h"
+#include "../include/stack.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
