@@ -136,13 +136,15 @@ int parse(char *in) {
     // printf("nums:\n");
     // displayStack(&numbers);    
 
-    reverseStack(&numbers);
+
     printf("nums:\n");
     displayStack(&numbers);
     printf("operators:\n");
     displayStack(&operators);
 
-
+    reverseStack(&numbers);
+    printf("postfix:\n");
+    displayStack(&numbers);
 
     
     
@@ -171,8 +173,6 @@ int parse(char *in) {
     // }
     // int answer = (int)*(pop(&operators));
     // printf("asnwer:::::: %d\n", answer);
-    // freeStack(&operators);
-    // freeStack(&numbers);
     // return answer;
     
     

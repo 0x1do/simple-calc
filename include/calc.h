@@ -16,8 +16,4 @@ int parse(char *in);
 char *tokenizer(char *in);
 void solve(char *in);
 int algo(char *in);
-<<<<<<< HEAD
 #endif // CALC_H
-=======
-#endif // CALC_H
->>>>>>> main
