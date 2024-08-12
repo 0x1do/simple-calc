@@ -14,6 +14,4 @@ char *getInput();
 bool validateop(char *in);
 int parse(char *in);
 char *tokenizer(char *in);
-void solve(char *in);
-int algo(char *in);
 #endif // CALC_H
