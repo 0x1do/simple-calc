@@ -1,6 +1,6 @@
-#include "/home/ido/calc/include/calc.h"
+#include "../include/calc.h"
 #include <ctype.h>
-#include "/home/ido/calc/include/stack.h"
+#include "../include/stack.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -87,7 +87,6 @@ int parse(char *in) {
 
     char adding[BUFFER_SIZE]; 
     int count = 0;
-
     for (int i = 0; in[i] != '\0'; i++) {
         if (isdigit(in[i])) {
             if (count < BUFFER_SIZE - 1) {
@@ -147,34 +146,34 @@ int parse(char *in) {
 
     
     
-    for (int i = 0; *peek(&numbers) != '\0'; i++) 
-    {
-        while (isdigit(*peek(&numbers)))
-        {
-            char *tmp = pop(&numbers);
-            push(&operators, tmp);
-        }
-        char operator = *pop(&numbers);
-        int num1 = (int)*(pop(&operators));
-        int num2 = (int)*(pop(&operators));
-        if (operator  == '+')
-        {
-            push(&operators, (char*)(num1 + num2));
-        } else if (operator == '-')
-        {
-            push(&operators, (char*)(num1 - num2));
-        } else if (operator == '*')
-        {
-            push(&operators, (char*)(num1 * num2));
-        } else {
-            push(&operators, (char*)(num1 / num2));
-        }
-    }
-    int answer = (int)*(pop(&operators));
-    printf("asnwer:::::: %d\n", answer);
-    freeStack(&operators);
-    freeStack(&numbers);
-    return answer;
+    // for (int i = 0; *peek(&numbers) != '\0'; i++) 
+    // {
+    //     while (isdigit(*peek(&numbers)))
+    //     {
+    //         char *tmp = pop(&numbers);
+    //         push(&operators, tmp);
+    //     }
+    //     char operator = *pop(&numbers);
+    //     int num1 = (int)*(pop(&operators));
+    //     int num2 = (int)*(pop(&operators));
+    //     if (operator  == '+')
+    //     {
+    //         push(&operators, (char*)(num1 + num2));
+    //     } else if (operator == '-')
+    //     {
+    //         push(&operators, (char*)(num1 - num2));
+    //     } else if (operator == '*')
+    //     {
+    //         push(&operators, (char*)(num1 * num2));
+    //     } else {
+    //         push(&operators, (char*)(num1 / num2));
+    //     }
+    // }
+    // int answer = (int)*(pop(&operators));
+    // printf("asnwer:::::: %d\n", answer);
+    // freeStack(&operators);
+    // freeStack(&numbers);
+    // return answer;
     
     
     
