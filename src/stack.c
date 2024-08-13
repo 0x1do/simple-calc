@@ -10,10 +10,12 @@ void initStack(Stack *s)
     s->top = -1;
 }
 
+
 bool isEmpty(Stack *s)
 {
     return (s->top == -1);
 }
+
 
 int isFull(Stack *s)
 {
@@ -25,6 +27,7 @@ void push(Stack *s, const char *value)
 {
     s->arr[++(s->top)] = strdup(value);
 }
+
 
 char *pop(Stack *s)
 {
