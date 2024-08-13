@@ -12,6 +12,7 @@ typedef struct {
     char *data;
 } token;
 
+
 char *getInput();
 bool validateop(char *in);
 void operation(Stack *s, char op, int num1, int num2);

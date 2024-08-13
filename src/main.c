@@ -15,7 +15,12 @@ char *getInput()
         exit(0);
     }
 
-    fgets(raw_input, BUFFER_SIZE, stdin);
+    if(fgets(raw_input, BUFFER_SIZE, stdin)== NULL)
+    {
+        printf("kaki");
+        exit(0);
+    }
+
     raw_input[strcspn(raw_input, "\n")] = '\0';
     size = strlen(raw_input);
     if (size == 0)
@@ -158,12 +163,28 @@ int parse(char *in)
 
     while (!isEmpty(&numbers)) 
     {
-        while (isdigit(*peek(&numbers)))
+        while (!isEmpty(&numbers))
         {
-            char *tmp = pop(&numbers);
-            push(&operators, tmp);
+            if (isdigit(*peek(&numbers)))
+            {
+                push(&operators, pop(&numbers));
+            } else {
+                exit(0);
+            }
+            
         }
 
+        if (isEmpty(&numbers)) {
+                if (strlen(peek(&operators)) > 10) {
+                    fprintf(stderr, "numbers can be up to 10 characters");
+                    exit(0);
+                }
+                
+                long answer = atoi(pop(&operators));
+                printf("answer: %lu\n", answer);
+                return answer;
+        }
+        
         char operator = *pop(&numbers);
         int num2 = atoi(pop(&operators));
         int num1 = atoi(pop(&operators));
