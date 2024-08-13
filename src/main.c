@@ -11,11 +11,14 @@ char *getInput()
     char *raw_input = malloc(BUFFER_SIZE * sizeof(char));
     if (raw_input == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
-        free(raw_input);
         exit(0);
     }
 
-    fgets(raw_input, BUFFER_SIZE, stdin);
+    if (fgets(raw_input, BUFFER_SIZE, stdin) == NULL) {
+        fprintf(stderr, "Input error\n");
+        free(raw_input);
+        exit(EXIT_FAILURE);
+    }
     raw_input[strcspn(raw_input, "\n")] = '\0';
     size = strlen(raw_input);
     if (size == 0)
@@ -31,8 +34,10 @@ char *getInput()
 
 bool validateop(char *in)
 {
-    int bracket = 0;
-    bool op = FALSE;
+    if (in == NULL) {
+    fprintf(stderr, "Failed to get input\n");
+    exit(0);
+    }
 
     if(in[0] == '-' || in[0] == '+' || in[0] == '/' || in[0] == '^' || in[0] == 
     '*' || in[size-1] == '-' || in[size-1] == '+' || in[size-1] == '/' || 
@@ -40,12 +45,10 @@ bool validateop(char *in)
         return FALSE;
     }
 
-    if (in == NULL) {
-    fprintf(stderr, "Failed to get input\n");
-    exit(0);
-    }
+    int bracket = 0;
+    bool op = FALSE;
 
-    for (int i = 0; i < strlen(in); i++)
+    for (int i = 0; i < size; i++)
     {
         if (in[i] == '(') {
             bracket++;
@@ -74,22 +77,27 @@ bool validateop(char *in)
 
 void operation(Stack *s, char op, int num1, int num2)
 {
-            char buffer[BUFFER_SIZE] = {0};
+    char buffer[BUFFER_SIZE] = {0};
+    long result = 0;
 
-        if (op  == 43) {
-            snprintf(buffer, sizeof(buffer), "%d", num1 + num2);
-            push(s, buffer);
-        } else if (op == 45) {
-            snprintf(buffer, sizeof(buffer), "%d", num1 - num2);
-            push(s, buffer);
-        } else if (op == 42) {
-            snprintf(buffer, sizeof(buffer), "%d", num1 * num2);
-            push(s, buffer);
-        } else {
-            snprintf(buffer, sizeof(buffer), "%d", num1 / num2);
-            push(s, buffer);
-        }
+    switch (op) {
+        case '+': result = num1 + num2; break;
+        case '-': result = num1 - num2; break;
+        case '*': result = num1 * num2; break;
+        case '/': 
+            if (num2 == 0) {
+                fprintf(stderr, "Division by zero\n");
+                exit(0);
+            }
+            result = num1 / num2; 
+            break;
+        default: return;
+    }
+
+    snprintf(buffer, sizeof(buffer), "%lu", result);
+    push(s, buffer);
 }
+
 
 int parse(char *in)
 {
@@ -157,41 +165,41 @@ int parse(char *in)
 }
 
 
-int eval(Stack *numbers, Stack *operators)
+int eval(Stack *full_expression, Stack *tmp_storage)
 {
 
-    while (!isEmpty(numbers)) 
+    while (!isEmpty(full_expression)) 
     {
-        while (!isEmpty(numbers))
+        while (!isEmpty(full_expression))
         {
-            if (isdigit(*peek(numbers)))
+            if (isdigit(*peek(full_expression)))
             {
-                push(operators, pop(numbers));
+                push(tmp_storage, pop(full_expression));
             } else {
                 break;
             }
             
         }
 
-        if (isEmpty(numbers)) {
-                if (strlen(peek(operators)) > 10) {
+        if (isEmpty(full_expression)) {
+                if (strlen(peek(tmp_storage)) > 10) {
                     fprintf(stderr, "numbers can be up to 10 characters\n");
                     exit(0);
                 }
                 
-                long answer = atoi(pop(operators));
+                long answer = atoi(pop(tmp_storage));
                 printf("answer: %lu\n", answer);
                 return answer;
         }
         
-        char operator = *pop(numbers);
-        int num2 = atoi(pop(operators));
-        int num1 = atoi(pop(operators));
+        char operator = *pop(full_expression);
+        int num2 = atoi(pop(tmp_storage));
+        int num1 = atoi(pop(tmp_storage));
        
-        operation(operators, operator, num1, num2);
+        operation(tmp_storage, operator, num1, num2);
     }
 
-    int answer = atoi(pop(operators));
+    int answer = atoi(pop(tmp_storage));
     printf("answer: %d\n", answer);
     return answer;
 }
@@ -204,11 +212,11 @@ int main()
     if (!validateop(in)) {
         fprintf(stderr, "invalid expression\n");
         free(in);
-        return 0;
+        return 1;
     }
 
     parse(in);
     
     free(in);
-    return 1;
+    return 0;
 }
