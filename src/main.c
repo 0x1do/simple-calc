@@ -117,8 +117,7 @@ int parse(char *in)
             if (in[i] == ')') {
                 while (!isEmpty(&operators) && *peek(&operators) != '(')
                 {
-                    char *tmpelm = pop(&operators);
-                    push(&numbers, tmpelm);
+                    push(&numbers, pop(&operators));
                 }
 
                 pop(&operators);
@@ -127,8 +126,7 @@ int parse(char *in)
                     while (!isEmpty(&operators) && (*peek(&operators) == '*'
                      || *peek(&operators) == '/'))
                     {
-                        char *tmpelm = pop(&operators);
-                        push(&numbers, tmpelm);
+                        push(&numbers, pop(&operators));
                     }
                     char operatorStr[2] = { in[i], '\0' };
                     push(&operators, operatorStr);
@@ -148,8 +146,7 @@ int parse(char *in)
     // Pop all remaining operators
     while (!isEmpty(&operators))
     {
-        char *tmpelm = pop(&operators);
-        push(&numbers, tmpelm);
+        push(&numbers, pop(&operators));
     }   
 
     reverseStack(&numbers);
