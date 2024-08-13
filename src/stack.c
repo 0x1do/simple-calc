@@ -25,7 +25,8 @@ bool isFull(Stack *s)
 
 void push(Stack *s, const char *value)
 {
-    if (isEmpty(s)) {
+    if (isFull(s)) {
+        fprintf(stderr, "full stack");
         exit(0);
     }
     s->arr[++(s->top)] = strdup(value);
