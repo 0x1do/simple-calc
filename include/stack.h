@@ -1,10 +1,11 @@
 #ifndef STACK_H
 #define STACK_H
-#define MAX 256
+
+#include "../include/calc.h"
 #include <stdbool.h>
 
 typedef struct {
-  char *arr[MAX];
+  char *arr[BUFFER_SIZE];
   int top;
 } Stack;
 
