@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
-int size;
+int size = 0;
 
 char *getInput()
 {
@@ -18,7 +18,7 @@ char *getInput()
     if (fgets(raw_input, BUFFER_SIZE, stdin) == NULL) {
         fprintf(stderr, "Input error\n");
         free(raw_input);
-        exit(EXIT_FAILURE);
+        exit(0);
     }
     raw_input[strcspn(raw_input, "\n")] = '\0';
     size = strlen(raw_input);
