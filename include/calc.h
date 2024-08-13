@@ -3,7 +3,9 @@
 #define BUFFER_SIZE 256
 #define TRUE 1
 #define FALSE 0
+#include "../include/stack.h"
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef struct {
     bool isnumeral;
@@ -12,6 +14,9 @@ typedef struct {
 
 char *getInput();
 bool validateop(char *in);
+void operation(Stack *s, char op, int num1, int num2);
 int parse(char *in);   
-char *tokenizer(char *in);
+
 #endif // CALC_H
+
+

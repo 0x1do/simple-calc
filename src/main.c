@@ -1,28 +1,30 @@
 #include "../include/calc.h"
 #include "../include/stack.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-int size = 0;
+int size;
 
 char *getInput()
 {
     char *raw_input = malloc(BUFFER_SIZE * sizeof(char));
     if (raw_input == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
+        free(raw_input);
         exit(0);
     }
 
-    if (fgets(raw_input, BUFFER_SIZE, stdin) == NULL) {
-        free(raw_input);
-        fprintf(stderr, "Input reading failed\n");
-        exit(0);
-    }
+    fgets(raw_input, BUFFER_SIZE, stdin);
     raw_input[strcspn(raw_input, "\n")] = '\0';
     size = strlen(raw_input);
-
+    if (size == 0)
+    {
+        fprintf(stderr, "empty expression\n");
+        free(raw_input);
+        exit(0);
+    }
+    
     return raw_input;
 }
 
@@ -70,6 +72,25 @@ bool validateop(char *in)
 }
 
 
+void operation(Stack *s, char op, int num1, int num2)
+{
+            char buffer[BUFFER_SIZE] = {0};
+
+        if (op  == 43) {
+            snprintf(buffer, sizeof(buffer), "%d", num1 + num2);
+            push(s, buffer);
+        } else if (op == 45) {
+            snprintf(buffer, sizeof(buffer), "%d", num1 - num2);
+            push(s, buffer);
+        } else if (op == 42) {
+            snprintf(buffer, sizeof(buffer), "%d", num1 * num2);
+            push(s, buffer);
+        } else {
+            snprintf(buffer, sizeof(buffer), "%d", num1 / num2);
+            push(s, buffer);
+        }
+}
+
 int parse(char *in)
 {
     Stack numbers = {0};
@@ -77,7 +98,7 @@ int parse(char *in)
     Stack operators = {0};
     initStack(&operators);
 
-    char adding[BUFFER_SIZE] = {0}; 
+    char adding[BUFFER_SIZE]; 
     int count = 0;
 
     for (int i = 0; in[i] != '\0'; i++)
@@ -146,21 +167,8 @@ int parse(char *in)
         char operator = *pop(&numbers);
         int num2 = atoi(pop(&operators));
         int num1 = atoi(pop(&operators));
-        char buffer[BUFFER_SIZE] = {0};
-
-        if (operator  == 43) {
-            snprintf(buffer, sizeof(buffer), "%d", num1 + num2);
-            push(&operators, buffer);
-        } else if (operator == 45) {
-            snprintf(buffer, sizeof(buffer), "%d", num1 - num2);
-            push(&operators, buffer);
-        } else if (operator == 42) {
-            snprintf(buffer, sizeof(buffer), "%d", num1 * num2);
-            push(&operators, buffer);
-        } else {
-            snprintf(buffer, sizeof(buffer), "%d", num1 / num2);
-            push(&operators, buffer);
-        }
+       
+        operation(&operators, operator, num1, num2);
     }
 
     int answer = atoi(pop(&operators));
