@@ -15,12 +15,7 @@ char *getInput()
         exit(0);
     }
 
-    if(fgets(raw_input, BUFFER_SIZE, stdin)== NULL)
-    {
-        printf("kaki");
-        exit(0);
-    }
-
+    fgets(raw_input, BUFFER_SIZE, stdin);
     raw_input[strcspn(raw_input, "\n")] = '\0';
     size = strlen(raw_input);
     if (size == 0)
@@ -169,7 +164,7 @@ int parse(char *in)
             {
                 push(&operators, pop(&numbers));
             } else {
-                exit(0);
+                break;
             }
             
         }
