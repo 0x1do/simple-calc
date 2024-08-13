@@ -18,4 +18,4 @@ void displayStack(Stack *s);
 void insertAtBottom(Stack *s, const char *value);
 void reverseStack(Stack *s);
 
-#endif // CALC_H
+#endif // STACK_H
