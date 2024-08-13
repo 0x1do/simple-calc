@@ -17,7 +17,7 @@ bool isEmpty(Stack *s)
 }
 
 
-int isFull(Stack *s)
+bool isFull(Stack *s)
 {
     return s->top == BUFFER_SIZE - 1;
 }   

@@ -11,7 +11,7 @@ typedef struct {
 
 void initStack(Stack *s);
 bool isEmpty(Stack *s);
-int isFull(Stack *s);
+bool isFull(Stack *s);
 void push(Stack *s, const char *value);
 char *pop(Stack *s);
 char *peek(Stack *s);

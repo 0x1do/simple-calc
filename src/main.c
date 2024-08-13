@@ -153,7 +153,7 @@ int parse(char *in)
     }
 
     // Pop all remaining operators
-    while (!isEmpty(&operators))
+    while (!isEmpty(&operators) && !isFull(&operators))
     {
         push(&numbers, pop(&operators));
     }   
@@ -169,7 +169,7 @@ int parse(char *in)
 int eval(Stack *full_expression, Stack *tmp_storage)
 {
 
-    while (!isEmpty(full_expression)) 
+    while (!isEmpty(full_expression) && !isFull(full_expression)) 
     {
         while (!isEmpty(full_expression))
         {
