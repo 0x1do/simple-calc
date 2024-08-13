@@ -16,7 +16,8 @@ typedef struct {
 char *getInput();
 bool validateop(char *in);
 void operation(Stack *s, char op, int num1, int num2);
-int parse(char *in);   
+int parse(char *in);
+int eval(Stack *numbers, Stack *operators);  
 
 #endif // CALC_H
 

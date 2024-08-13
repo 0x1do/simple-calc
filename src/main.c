@@ -153,38 +153,45 @@ int parse(char *in)
     printf("postfix:\n");
     displayStack(&numbers);
 
-    while (!isEmpty(&numbers)) 
+    return eval(&numbers, &operators);;
+}
+
+
+int eval(Stack *numbers, Stack *operators)
+{
+
+    while (!isEmpty(numbers)) 
     {
-        while (!isEmpty(&numbers))
+        while (!isEmpty(numbers))
         {
-            if (isdigit(*peek(&numbers)))
+            if (isdigit(*peek(numbers)))
             {
-                push(&operators, pop(&numbers));
+                push(operators, pop(numbers));
             } else {
                 break;
             }
             
         }
 
-        if (isEmpty(&numbers)) {
-                if (strlen(peek(&operators)) > 10) {
-                    fprintf(stderr, "numbers can be up to 10 characters");
+        if (isEmpty(numbers)) {
+                if (strlen(peek(operators)) > 10) {
+                    fprintf(stderr, "numbers can be up to 10 characters\n");
                     exit(0);
                 }
                 
-                long answer = atoi(pop(&operators));
+                long answer = atoi(pop(operators));
                 printf("answer: %lu\n", answer);
                 return answer;
         }
         
-        char operator = *pop(&numbers);
-        int num2 = atoi(pop(&operators));
-        int num1 = atoi(pop(&operators));
+        char operator = *pop(numbers);
+        int num2 = atoi(pop(operators));
+        int num1 = atoi(pop(operators));
        
-        operation(&operators, operator, num1, num2);
+        operation(operators, operator, num1, num2);
     }
 
-    int answer = atoi(pop(&operators));
+    int answer = atoi(pop(operators));
     printf("answer: %d\n", answer);
     return answer;
 }
