@@ -9,7 +9,7 @@
 #include <stdbool.h>
 
 char *getInput();
-bool validateop(char *in);
+void validateop(char *in, int size);
 void operation(Stack *s, char op, int num1, int num2);
 int parse(char *in);
 int eval(Stack *numbers, Stack *operators);  

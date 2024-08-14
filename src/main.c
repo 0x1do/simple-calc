@@ -5,10 +5,10 @@
 #include <ctype.h>
 #include <stdio.h>
 
-int size = 0;
 
 char *getInput()
 {
+    int size = 0;
     char *raw_input = malloc(BUFFER_SIZE * sizeof(char));
     if (raw_input == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
@@ -29,21 +29,24 @@ char *getInput()
         exit(0);
     }
     
+    validateop(raw_input, size);
+
     return raw_input;
 }
 
 
-bool validateop(char *in)
+void validateop(char *in, int size)
 {
     if (in == NULL) {
-    fprintf(stderr, "Failed to get input\n");
-    exit(0);
+        fprintf(stderr, "Failed to get input\n");
+        exit(0);
     }
 
-    if(in[0] == '-' || in[0] == '+' || in[0] == '/' || in[0] == '^' || in[0] == 
-    '*' || in[size-1] == '-' || in[size-1] == '+' || in[size-1] == '/' || 
-    in[size-1] == '^' || in[size-1] == '*' || in[size-1] == '(') {
-        return FALSE;
+    if(in[0] == '-' || in[0] == '+' || in[0] == '/' || in[0] == 
+        '*' || in[size-1] == '-' || in[size-1] == '+' || in[size-1] == '/'
+         || in[size-1] == '*' || in[size-1] == '(') {
+        fprintf(stderr, "invalid expression\n");
+        exit(0);
     }
 
     int bracket = 0;
@@ -57,13 +60,15 @@ bool validateop(char *in)
             if (bracket > 0) {
                 bracket--;
             } else {
-                return FALSE;
+                fprintf(stderr, "invalid expression\n");
+                exit(0);
             }
 
         } else if (in[i] == '-' || in[i] == '+' || in[i] == '/' || in[i] == '^'
          || in[i] == '*') {
             if (op) {
-                return FALSE;
+                fprintf(stderr, "invalid expression\n");
+                exit(0);
             }
             op = TRUE;
 
@@ -71,8 +76,6 @@ bool validateop(char *in)
             op = FALSE;
         }
     }
-    
-    return TRUE;
 }
 
 
@@ -209,12 +212,6 @@ int eval(Stack *full_expression, Stack *tmp_storage)
 int main()
 {
     char *in = getInput();
-
-    if (!validateop(in)) {
-        fprintf(stderr, "invalid expression\n");
-        free(in);
-        return 1;
-    }
 
     parse(in);
     
