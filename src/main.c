@@ -42,6 +42,17 @@ void validateop(char *in, int size)
         exit(0);
     }
 
+    for (int i = 0; i < size; i++)
+    {
+        if (!isdigit(in[i]) 
+        && in[i] != '+' && in[i] != '-' && in[i] != '*' && in[i] != '/')
+        {
+            fprintf(stderr, "use 0-9 and +-/*\n");
+            exit(0);
+        }
+        
+    }
+    
     if(in[0] == '-' || in[0] == '+' || in[0] == '/' || in[0] == 
         '*' || in[size-1] == '-' || in[size-1] == '+' || in[size-1] == '/'
          || in[size-1] == '*' || in[size-1] == '(') {
@@ -110,7 +121,8 @@ int parse(char *in)
     Stack operators = {0};
     initStack(&operators);
 
-    char adding[BUFFER_SIZE]; 
+    char *adding = malloc(BUFFER_SIZE);
+ 
     int count = 0;
 
     for (int i = 0; in[i] != '\0'; i++)
@@ -123,6 +135,8 @@ int parse(char *in)
             if (count > 0) {
                 adding[count] = '\0'; 
                 push(&numbers, strdup(adding));
+                free(adding);
+                adding = NULL;
                 count = 0;
             }
 
@@ -153,8 +167,14 @@ int parse(char *in)
     if (count > 0) {
         adding[count] = '\0';
         push(&numbers, strdup(adding)); // Push a duplicate of the last number
+        free(adding);
+        adding = NULL;
     }
-
+    if (adding != NULL)
+    {
+        free(adding);
+    }
+    
     // Pop all remaining operators
     while (!isEmpty(&operators) && !isFull(&operators))
     {
