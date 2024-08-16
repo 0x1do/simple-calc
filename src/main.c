@@ -34,14 +34,8 @@ char *getInput()
     return raw_input;
 }
 
-
-void validateop(char *in, int size)
+void haveValidContent(char *in, int size)
 {
-    if (in == NULL) {
-        fprintf(stderr, "Failed to get input\n");
-        exit(0);
-    }
-
     for (int i = 0; i < size; i++)
     {
         if (!isdigit(in[i]) 
@@ -59,10 +53,12 @@ void validateop(char *in, int size)
         fprintf(stderr, "invalid expression\n");
         exit(0);
     }
+}
 
+
+void balancedBrackets(char *in, int size)
+{
     int bracket = 0;
-    bool op = FALSE;
-
     for (int i = 0; i < size; i++)
     {
         if (in[i] == '(') {
@@ -75,7 +71,18 @@ void validateop(char *in, int size)
                 exit(0);
             }
 
-        } else if (in[i] == '-' || in[i] == '+' || in[i] == '/' || in[i] == '^'
+        }
+    }
+}
+
+
+void twoOperators(char *in, int size)
+{
+    bool op = FALSE;
+
+    for (int i = 0; i < size; i++)
+    {
+        if (in[i] == '-' || in[i] == '+' || in[i] == '/' || in[i] == '^'
          || in[i] == '*') {
             if (op) {
                 fprintf(stderr, "invalid expression\n");
@@ -87,6 +94,20 @@ void validateop(char *in, int size)
             op = FALSE;
         }
     }
+}
+
+
+void validateop(char *in, int size)
+{
+    if (in == NULL) {
+        fprintf(stderr, "Failed to get input\n");
+        exit(0);
+    }
+
+    haveValidContent(in, size);
+
+    twoOperators(in, size);
+
 }
 
 
@@ -114,6 +135,62 @@ void operation(Stack *s, char op, int num1, int num2)
 }
 
 
+void convertToPostfix(char *in, char *adding, Stack numbers, Stack operators, int count)
+{
+    int i = 0;
+    if (isdigit(in[i])) {
+        if (count < BUFFER_SIZE - 1) {
+            adding[count++] = in[i]; 
+        }
+    } else {
+        if (count > 0) {
+            adding[count] = '\0'; 
+            push(&numbers, strdup(adding));
+            free(adding);
+            adding = NULL;
+            count = 0;
+        }
+
+        if (in[i] == ')') {
+            while (!isEmpty(&operators) && *peek(&operators) != '(')
+            {
+                push(&numbers, pop(&operators));
+            }
+
+            pop(&operators);
+        } else {
+            if (in[i] == '+' || in[i] == '-') {
+                while (!isEmpty(&operators) && (*peek(&operators) == '*'
+                 || *peek(&operators) == '/'))
+                {
+                    push(&numbers, pop(&operators));
+                }
+                char operatorStr[2] = { in[i], '\0' };
+                push(&operators, operatorStr);
+            } else if (in[i] == '*' || in[i] == '/') {
+                char operatorStr[2] = { in[i], '\0' };
+                push(&operators, operatorStr);
+            }
+        }
+    }   
+}
+
+
+void pushLastNumber(Stack numbers, char *adding, int count)
+{
+    if (count > 0) {
+        adding[count] = '\0';
+        push(&numbers, strdup(adding));
+        free(adding);
+        adding = NULL;
+    }
+    if (adding != NULL)
+    {
+        free(adding);
+    }
+}
+
+
 int parse(char *in)
 {
     Stack numbers = {0};
@@ -122,65 +199,19 @@ int parse(char *in)
     initStack(&operators);
 
     char *adding = malloc(BUFFER_SIZE);
- 
     int count = 0;
 
     for (int i = 0; in[i] != '\0'; i++)
     {
-        if (isdigit(in[i])) {
-            if (count < BUFFER_SIZE - 1) {
-                adding[count++] = in[i]; 
-            }
-        } else {
-            if (count > 0) {
-                adding[count] = '\0'; 
-                push(&numbers, strdup(adding));
-                free(adding);
-                adding = NULL;
-                count = 0;
-            }
-
-            if (in[i] == ')') {
-                while (!isEmpty(&operators) && *peek(&operators) != '(')
-                {
-                    push(&numbers, pop(&operators));
-                }
-
-                pop(&operators);
-            } else {
-                if (in[i] == '+' || in[i] == '-') {
-                    while (!isEmpty(&operators) && (*peek(&operators) == '*'
-                     || *peek(&operators) == '/'))
-                    {
-                        push(&numbers, pop(&operators));
-                    }
-                    char operatorStr[2] = { in[i], '\0' };
-                    push(&operators, operatorStr);
-                } else if (in[i] == '*' || in[i] == '/') {
-                    char operatorStr[2] = { in[i], '\0' };
-                    push(&operators, operatorStr);
-                }
-            }
-        }
+        convertToPostfix(in, adding, numbers, operators, count);
     }
+    pushLastNumber(numbers, adding, count);
 
-    if (count > 0) {
-        adding[count] = '\0';
-        push(&numbers, strdup(adding)); // Push a duplicate of the last number
-        free(adding);
-        adding = NULL;
-    }
-    if (adding != NULL)
-    {
-        free(adding);
-    }
-    
     // Pop all remaining operators
     while (!isEmpty(&operators) && !isFull(&operators))
     {
         push(&numbers, pop(&operators));
     }   
-
     reverseStack(&numbers);
     printf("postfix:\n");
     displayStack(&numbers);
