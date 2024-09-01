@@ -9,16 +9,9 @@
 #include <stdbool.h>
 
 char *getInput();
-void haveValidContent(char *in, int size);
-void balancedBrackets(char *in, int size);
-void twoOperators(char *in, int size);
-void convertToPostfix(char *in, char *adding, Stack numbers, Stack operators, int count);
-void pushLastNumber(Stack numbers, char *adding, int count);
-void validateop(char *in, int size);
+bool validateop(char *in);
 void operation(Stack *s, char op, int num1, int num2);
 int parse(char *in);
 int eval(Stack *numbers, Stack *operators);  
 
 #endif // CALC_H
-
-

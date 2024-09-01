@@ -5,10 +5,10 @@
 #include <ctype.h>
 #include <stdio.h>
 
+int size = 0;
 
 char *getInput()
 {
-    int size = 0;
     char *raw_input = malloc(BUFFER_SIZE * sizeof(char));
     if (raw_input == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
@@ -29,12 +29,11 @@ char *getInput()
         exit(0);
     }
     
-    validateop(raw_input, size);
-
     return raw_input;
 }
 
-void haveValidContent(char *in, int size)
+
+void haveValidContent(char *in)
 {
     for (int i = 0; i < size; i++)
     {
@@ -56,9 +55,24 @@ void haveValidContent(char *in, int size)
 }
 
 
-void balancedBrackets(char *in, int size)
+bool validateop(char *in)
 {
+    if (in == NULL) {
+      fprintf(stderr, "Failed to get input\n");
+      exit(0);
+    }
+
+    haveValidContent(in);
+
+    if(in[0] == '-' || in[0] == '+' || in[0] == '/' || in[0] == '^' || in[0] == 
+    '*' || in[size-1] == '-' || in[size-1] == '+' || in[size-1] == '/' || 
+    in[size-1] == '^' || in[size-1] == '*' || in[size-1] == '(') {
+        return FALSE;
+    }
+
     int bracket = 0;
+    bool op = FALSE;
+
     for (int i = 0; i < size; i++)
     {
         if (in[i] == '(') {
@@ -67,26 +81,13 @@ void balancedBrackets(char *in, int size)
             if (bracket > 0) {
                 bracket--;
             } else {
-                fprintf(stderr, "invalid expression\n");
-                exit(0);
+                return FALSE;
             }
 
-        }
-    }
-}
-
-
-void twoOperators(char *in, int size)
-{
-    bool op = FALSE;
-
-    for (int i = 0; i < size; i++)
-    {
-        if (in[i] == '-' || in[i] == '+' || in[i] == '/' || in[i] == '^'
+        } else if (in[i] == '-' || in[i] == '+' || in[i] == '/' || in[i] == '^'
          || in[i] == '*') {
             if (op) {
-                fprintf(stderr, "invalid expression\n");
-                exit(0);
+                return FALSE;
             }
             op = TRUE;
 
@@ -94,20 +95,8 @@ void twoOperators(char *in, int size)
             op = FALSE;
         }
     }
-}
-
-
-void validateop(char *in, int size)
-{
-    if (in == NULL) {
-        fprintf(stderr, "Failed to get input\n");
-        exit(0);
-    }
-
-    haveValidContent(in, size);
-
-    twoOperators(in, size);
-
+    
+    return TRUE;
 }
 
 
@@ -135,62 +124,6 @@ void operation(Stack *s, char op, int num1, int num2)
 }
 
 
-void convertToPostfix(char *in, char *adding, Stack numbers, Stack operators, int count)
-{
-    int i = 0;
-    if (isdigit(in[i])) {
-        if (count < BUFFER_SIZE - 1) {
-            adding[count++] = in[i]; 
-        }
-    } else {
-        if (count > 0) {
-            adding[count] = '\0'; 
-            push(&numbers, strdup(adding));
-            free(adding);
-            adding = NULL;
-            count = 0;
-        }
-
-        if (in[i] == ')') {
-            while (!isEmpty(&operators) && *peek(&operators) != '(')
-            {
-                push(&numbers, pop(&operators));
-            }
-
-            pop(&operators);
-        } else {
-            if (in[i] == '+' || in[i] == '-') {
-                while (!isEmpty(&operators) && (*peek(&operators) == '*'
-                 || *peek(&operators) == '/'))
-                {
-                    push(&numbers, pop(&operators));
-                }
-                char operatorStr[2] = { in[i], '\0' };
-                push(&operators, operatorStr);
-            } else if (in[i] == '*' || in[i] == '/') {
-                char operatorStr[2] = { in[i], '\0' };
-                push(&operators, operatorStr);
-            }
-        }
-    }   
-}
-
-
-void pushLastNumber(Stack numbers, char *adding, int count)
-{
-    if (count > 0) {
-        adding[count] = '\0';
-        push(&numbers, strdup(adding));
-        free(adding);
-        adding = NULL;
-    }
-    if (adding != NULL)
-    {
-        free(adding);
-    }
-}
-
-
 int parse(char *in)
 {
     Stack numbers = {0};
@@ -198,20 +131,57 @@ int parse(char *in)
     Stack operators = {0};
     initStack(&operators);
 
-    char *adding = malloc(BUFFER_SIZE);
+    char adding[BUFFER_SIZE]; 
     int count = 0;
 
     for (int i = 0; in[i] != '\0'; i++)
     {
-        convertToPostfix(in, adding, numbers, operators, count);
+        if (isdigit(in[i])) {
+            if (count < BUFFER_SIZE - 1) {
+                adding[count++] = in[i]; 
+            }
+        } else {
+            if (count > 0) {
+                adding[count] = '\0'; 
+                push(&numbers, strdup(adding));
+                count = 0;
+            }
+
+            if (in[i] == ')') {
+                while (!isEmpty(&operators) && *peek(&operators) != '(')
+                {
+                    push(&numbers, pop(&operators));
+                }
+
+                pop(&operators);
+            } else {
+                if (in[i] == '+' || in[i] == '-') {
+                    while (!isEmpty(&operators) && (*peek(&operators) == '*'
+                     || *peek(&operators) == '/'))
+                    {
+                        push(&numbers, pop(&operators));
+                    }
+                    char operatorStr[2] = { in[i], '\0' };
+                    push(&operators, operatorStr);
+                } else if (in[i] == '*' || in[i] == '/') {
+                    char operatorStr[2] = { in[i], '\0' };
+                    push(&operators, operatorStr);
+                }
+            }
+        }
     }
-    pushLastNumber(numbers, adding, count);
+
+    if (count > 0) {
+        adding[count] = '\0';
+        push(&numbers, strdup(adding)); // Push a duplicate of the last number
+    }
 
     // Pop all remaining operators
     while (!isEmpty(&operators) && !isFull(&operators))
     {
         push(&numbers, pop(&operators));
     }   
+
     reverseStack(&numbers);
     printf("postfix:\n");
     displayStack(&numbers);
@@ -262,10 +232,16 @@ int eval(Stack *full_expression, Stack *tmp_storage)
 
 int main()
 {
-    char *in = getInput();
-
-    parse(in);
-    
+  char *in = getInput();
+  if (!validateop(in)) {
+    fprintf(stderr, "invalid expression\n");
     free(in);
-    return 0;
+    return 1;
+  }
+
+  parse(in);
+  free(in);
+  return 0;
+
 }
+
