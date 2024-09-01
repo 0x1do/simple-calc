@@ -41,7 +41,7 @@ void haveValidContent(char *in)
         if (!isdigit(in[i]) 
         && in[i] != '+' && in[i] != '-' && in[i] != '*' && in[i] != '/' && in[i] != '(' && in[i] != ')')
         {
-            fprintf(stderr, "use 0-9 and +-/*\n");
+            fprintf(stderr, "use 0-9 and +-/*\n\n");
             exit(0);
         }
         
@@ -50,7 +50,7 @@ void haveValidContent(char *in)
     if(in[0] == '-' || in[0] == '+' || in[0] == '/' || in[0] == 
         '*' || in[size-1] == '-' || in[size-1] == '+' || in[size-1] == '/'
          || in[size-1] == '*' || in[size-1] == '(') {
-        fprintf(stderr, "invalid expression\n");
+        fprintf(stderr, "invalid expression\n\n");
         exit(0);
     }
 }
@@ -65,7 +65,7 @@ void twoOperators(char *in)
         if (in[i] == '-' || in[i] == '+' || in[i] == '/' || in[i] == '^'
          || in[i] == '*') {
             if (op) {
-                fprintf(stderr, "invalid expression\n");
+                fprintf(stderr, "invalid expression\n\n");
                 exit(0);
             }
             op = TRUE;
@@ -80,7 +80,7 @@ void twoOperators(char *in)
 void validateOp(char *in)
 {
   if (in == NULL) {
-    fprintf(stderr, "Failed to get input\n");
+    fprintf(stderr, "Failed to get input\n\n");
     exit(0);
   }
 
@@ -101,12 +101,12 @@ void operation(Stack *s, char op, int num1, int num2)
         case '*': result = num1 * num2; break;
         case '/': 
             if (num2 == 0) {
-                fprintf(stderr, "Division by zero\n");
+                fprintf(stderr, "Division by zero\n\n");
                 exit(0);
             }
             result = num1 / num2; 
             break;
-        default: return;
+        default: exit(0);
     }
 
     snprintf(buffer, sizeof(buffer), "%lu", result);
@@ -203,7 +203,7 @@ int eval(Stack *full_expression, Stack *tmp_storage)
                 }
                 
                 long answer = atoi(pop(tmp_storage));
-                printf("answer: %lu\n", answer);
+                printf("answer: %lu\n\n", answer);
                 return answer;
         }
         
@@ -215,16 +215,42 @@ int eval(Stack *full_expression, Stack *tmp_storage)
     }
 
     int answer = atoi(pop(tmp_storage));
-    printf("answer: %d\n", answer);
+    printf("answer: %d\n\n", answer);
     return answer;
+}
+
+
+void welcome()
+{
+  printf("Welcome to my calculator!\nSelect (1) for calculate an expression\nSelect (2) for exiting\n");
+  fflush(stdout);
+  char choice = getchar();
+
+  while (getchar() != '\n' && getchar() != EOF);
+
+
+  if(choice == '1') {
+    char *in = getInput();
+    parse(in);
+    free(in);
+    return;
+  } else if(choice == '2') {
+    exit(0);
+  } else {
+    printf("choose only 1 or 2\n");
+    fflush(stdout);
+    return;
+  }
 }
 
 
 int main()
 {
-  char *in = getInput();
-  parse(in);
-  free(in);
-  return 0;
+  while(1)
+  {
+    welcome();
+    fflush(stdin);
+  }
 }
+
 
