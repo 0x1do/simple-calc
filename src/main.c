@@ -29,6 +29,7 @@ char *getInput()
         exit(0);
     }
     
+    validateOp(raw_input);
     return raw_input;
 }
 
@@ -38,7 +39,7 @@ void haveValidContent(char *in)
     for (int i = 0; i < size; i++)
     {
         if (!isdigit(in[i]) 
-        && in[i] != '+' && in[i] != '-' && in[i] != '*' && in[i] != '/')
+        && in[i] != '+' && in[i] != '-' && in[i] != '*' && in[i] != '/' && in[i] != '(' && in[i] != ')')
         {
             fprintf(stderr, "use 0-9 and +-/*\n");
             exit(0);
@@ -55,39 +56,17 @@ void haveValidContent(char *in)
 }
 
 
-bool validateop(char *in)
+void twoOperators(char *in)
 {
-    if (in == NULL) {
-      fprintf(stderr, "Failed to get input\n");
-      exit(0);
-    }
-
-    haveValidContent(in);
-
-    if(in[0] == '-' || in[0] == '+' || in[0] == '/' || in[0] == '^' || in[0] == 
-    '*' || in[size-1] == '-' || in[size-1] == '+' || in[size-1] == '/' || 
-    in[size-1] == '^' || in[size-1] == '*' || in[size-1] == '(') {
-        return FALSE;
-    }
-
-    int bracket = 0;
     bool op = FALSE;
 
     for (int i = 0; i < size; i++)
     {
-        if (in[i] == '(') {
-            bracket++;
-        } else if (in[i] == ')') {
-            if (bracket > 0) {
-                bracket--;
-            } else {
-                return FALSE;
-            }
-
-        } else if (in[i] == '-' || in[i] == '+' || in[i] == '/' || in[i] == '^'
+        if (in[i] == '-' || in[i] == '+' || in[i] == '/' || in[i] == '^'
          || in[i] == '*') {
             if (op) {
-                return FALSE;
+                fprintf(stderr, "invalid expression\n");
+                exit(0);
             }
             op = TRUE;
 
@@ -95,9 +74,20 @@ bool validateop(char *in)
             op = FALSE;
         }
     }
-    
-    return TRUE;
 }
+
+
+void validateOp(char *in)
+{
+  if (in == NULL) {
+    fprintf(stderr, "Failed to get input\n");
+    exit(0);
+  }
+
+  haveValidContent(in);
+  twoOperators(in);
+}
+
 
 
 void operation(Stack *s, char op, int num1, int num2)
@@ -233,15 +223,8 @@ int eval(Stack *full_expression, Stack *tmp_storage)
 int main()
 {
   char *in = getInput();
-  if (!validateop(in)) {
-    fprintf(stderr, "invalid expression\n");
-    free(in);
-    return 1;
-  }
-
   parse(in);
   free(in);
   return 0;
-
 }
 
