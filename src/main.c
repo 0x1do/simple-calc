@@ -12,29 +12,32 @@ char *getInput()
     char *raw_input = malloc(BUFFER_SIZE * sizeof(char));
     if (raw_input == NULL) {
         fprintf(stderr, "Memory allocation failed\n");
-        exit(0);
+        return raw_input;
     }
 
     if (fgets(raw_input, BUFFER_SIZE, stdin) == NULL) {
         fprintf(stderr, "Input error\n");
-        free(raw_input);
-        exit(0);
+        raw_input = NULL;
+        return raw_input;
     }
     raw_input[strcspn(raw_input, "\n")] = '\0';
     size = strlen(raw_input);
     if (size == 0)
     {
         fprintf(stderr, "empty expression\n");
-        free(raw_input);
-        exit(0);
+        raw_input = NULL;
+        return raw_input;
     }
     
-    validateOp(raw_input);
+    if (validateOp(raw_input) == 0)
+    {
+      raw_input = NULL;
+    }
     return raw_input;
 }
 
 
-void haveValidContent(char *in)
+int haveValidContent(char *in)
 {
     for (int i = 0; i < size; i++)
     {
@@ -42,7 +45,7 @@ void haveValidContent(char *in)
         && in[i] != '+' && in[i] != '-' && in[i] != '*' && in[i] != '/' && in[i] != '(' && in[i] != ')')
         {
             fprintf(stderr, "use 0-9 and +-/*\n\n");
-            exit(0);
+            return 0;
         }
         
     }
@@ -51,12 +54,13 @@ void haveValidContent(char *in)
         '*' || in[size-1] == '-' || in[size-1] == '+' || in[size-1] == '/'
          || in[size-1] == '*' || in[size-1] == '(') {
         fprintf(stderr, "invalid expression\n\n");
-        exit(0);
+        return 0;
     }
+    return 1;
 }
 
 
-void twoOperators(char *in)
+int twoOperators(char *in)
 {
     bool op = FALSE;
 
@@ -66,7 +70,7 @@ void twoOperators(char *in)
          || in[i] == '*') {
             if (op) {
                 fprintf(stderr, "invalid expression\n\n");
-                exit(0);
+                return 0;
             }
             op = TRUE;
 
@@ -74,18 +78,23 @@ void twoOperators(char *in)
             op = FALSE;
         }
     }
+    return 1;
 }
 
 
-void validateOp(char *in)
+int validateOp(char *in)
 {
   if (in == NULL) {
     fprintf(stderr, "Failed to get input\n\n");
-    exit(0);
+    return 0;
   }
 
-  haveValidContent(in);
-  twoOperators(in);
+  int ret1 = haveValidContent(in);
+  int ret2 = twoOperators(in);
+  if(ret1 == 0 || ret2 == 0) {
+    return 0;
+  }
+  return 1;
 }
 
 
@@ -176,13 +185,12 @@ int parse(char *in)
     printf("postfix:\n");
     displayStack(&numbers);
 
-    return eval(&numbers, &operators);;
+    return eval(&numbers, &operators);
 }
 
 
 int eval(Stack *full_expression, Stack *tmp_storage)
 {
-
     while (!isEmpty(full_expression) && !isFull(full_expression)) 
     {
         while (!isEmpty(full_expression))
@@ -199,12 +207,12 @@ int eval(Stack *full_expression, Stack *tmp_storage)
         if (isEmpty(full_expression)) {
                 if (strlen(peek(tmp_storage)) > 10) {
                     fprintf(stderr, "numbers can be up to 10 characters\n");
-                    exit(0);
+                    return 0;
                 }
                 
                 long answer = atoi(pop(tmp_storage));
                 printf("answer: %lu\n\n", answer);
-                return answer;
+                return 1;
         }
         
         char operator = *pop(full_expression);
@@ -216,7 +224,7 @@ int eval(Stack *full_expression, Stack *tmp_storage)
 
     int answer = atoi(pop(tmp_storage));
     printf("answer: %d\n\n", answer);
-    return answer;
+    return 1;
 }
 
 
@@ -231,7 +239,12 @@ void welcome()
 
   if(choice == '1') {
     char *in = getInput();
-    parse(in);
+    if(in == NULL) {
+      return;
+    }
+    if(parse(in) == 0) {
+      return;
+    }
     free(in);
     return;
   } else if(choice == '2') {

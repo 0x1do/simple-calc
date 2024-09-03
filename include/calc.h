@@ -9,9 +9,9 @@
 #include <stdbool.h>
 
 char *getInput();
-void haveValidContent(char *in);
-void twoOperators(char *in);
-void validateOp(char *in);
+int haveValidContent(char *in);
+int twoOperators(char *in);
+int validateOp(char *in);
 void operation(Stack *s, char op, int num1, int num2);
 int parse(char *in);
 int eval(Stack *numbers, Stack *operators);  
