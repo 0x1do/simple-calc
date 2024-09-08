@@ -98,7 +98,6 @@ int validateOp(char *in)
 }
 
 
-
 void operation(Stack *s, char op, int num1, int num2)
 {
     char buffer[BUFFER_SIZE] = {0};
@@ -123,6 +122,47 @@ void operation(Stack *s, char op, int num1, int num2)
 }
 
 
+void convertToPostfix(char *in, char *adding, Stack numbers, Stack operators, int count)
+{
+    int i = 0;
+    if (isdigit(in[i])) {
+        if (count < BUFFER_SIZE - 1) {
+            adding[count++] = in[i]; 
+        }
+    } else {
+        if (count > 0) {
+            adding[count] = '\0'; 
+            push(&numbers, strdup(adding));
+            free(adding);
+            adding = NULL;
+            count = 0;
+        }
+
+        if (in[i] == ')') {
+            while (!isEmpty(&operators) && *peek(&operators) != '(')
+            {
+                push(&numbers, pop(&operators));
+            }
+
+            pop(&operators);
+        } else {
+            if (in[i] == '+' || in[i] == '-') {
+                while (!isEmpty(&operators) && (*peek(&operators) == '*'
+                 || *peek(&operators) == '/'))
+                {
+                    push(&numbers, pop(&operators));
+                }
+                char operatorStr[2] = { in[i], '\0' };
+                push(&operators, operatorStr);
+            } else if (in[i] == '*' || in[i] == '/') {
+                char operatorStr[2] = { in[i], '\0' };
+                push(&operators, operatorStr);
+            }
+        }
+    }   
+}
+
+
 int parse(char *in)
 {
     Stack numbers = {0};
@@ -130,44 +170,12 @@ int parse(char *in)
     Stack operators = {0};
     initStack(&operators);
 
-    char adding[BUFFER_SIZE]; 
+    char *adding[BUFFER_SIZE]; 
     int count = 0;
 
     for (int i = 0; in[i] != '\0'; i++)
     {
-        if (isdigit(in[i])) {
-            if (count < BUFFER_SIZE - 1) {
-                adding[count++] = in[i]; 
-            }
-        } else {
-            if (count > 0) {
-                adding[count] = '\0'; 
-                push(&numbers, strdup(adding));
-                count = 0;
-            }
-
-            if (in[i] == ')') {
-                while (!isEmpty(&operators) && *peek(&operators) != '(')
-                {
-                    push(&numbers, pop(&operators));
-                }
-
-                pop(&operators);
-            } else {
-                if (in[i] == '+' || in[i] == '-') {
-                    while (!isEmpty(&operators) && (*peek(&operators) == '*'
-                     || *peek(&operators) == '/'))
-                    {
-                        push(&numbers, pop(&operators));
-                    }
-                    char operatorStr[2] = { in[i], '\0' };
-                    push(&operators, operatorStr);
-                } else if (in[i] == '*' || in[i] == '/') {
-                    char operatorStr[2] = { in[i], '\0' };
-                    push(&operators, operatorStr);
-                }
-            }
-        }
+      convertToPostfix(in, adding, numbers, operators, count);
     }
 
     if (count > 0) {
